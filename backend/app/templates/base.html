@@ -1,0 +1,18 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8">
+  <title>Registro de Incidentes do NOC</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <nav>
+    <a href="{{ url_for('incidentes.listar') }}">Incidentes</a>
+    <a href="{{ url_for('usuarios.listar') }}">Usuários</a>
+    <a href="{{ url_for('bairros.listar') }}">Bairros</a>
+  </nav>
+  <main>
+    {% block conteudo %}{% endblock %}
+  </main>
+</body>
+</html>

@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block conteudo %}
+<h1>{{ titulo }}</h1>
+
+{% if erro %}<p class="erro">{{ erro }}</p>{% endif %}
+
+<form method="post" action="{{ acao }}">
+  <label>Nome
+    <input type="text" name="nome" value="{{ valores.nome }}">
+  </label>
+
+  <label>E-mail
+    <input type="text" name="email" value="{{ valores.email }}">
+  </label>
+
+  <label>Perfil
+    <select name="perfil">
+      {% for perfil in perfis %}
+      <option value="{{ perfil }}" {% if perfil == valores.perfil %}selected{% endif %}>{{ perfil }}</option>
+      {% endfor %}
+    </select>
+  </label>
+
+  <label>Senha {% if usuario %}(deixe vazio para manter a atual){% endif %}
+    <input type="password" name="senha">
+  </label>
+
+  <button type="submit">Salvar</button>
+</form>
+
+<p><a href="{{ url_for('usuarios.listar') }}">Voltar</a></p>
+{% endblock %}

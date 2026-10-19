@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+
+{% block conteudo %}
+<h1>{{ titulo }}</h1>
+
+{% if erro %}<p class="erro">{{ erro }}</p>{% endif %}
+
+<form method="post" action="{{ acao }}">
+  <label>Título
+    <input type="text" name="titulo" value="{{ valores.titulo }}">
+  </label>
+
+  <label>Descrição
+    <textarea name="descricao" rows="4">{{ valores.descricao }}</textarea>
+  </label>
+
+  <label>Categoria
+    <select name="categoria">
+      {% for categoria in categorias %}
+      <option value="{{ categoria }}" {% if categoria == valores.categoria %}selected{% endif %}>{{ categoria }}</option>
+      {% endfor %}
+    </select>
+  </label>
+
+  <label>Severidade
+    <select name="severidade">
+      {% for severidade in severidades %}
+      <option value="{{ severidade }}" {% if severidade == valores.severidade %}selected{% endif %}>{{ severidade }}</option>
+      {% endfor %}
+    </select>
+  </label>
+
+  <label>Clientes afetados
+    <input type="number" name="clientes_afetados" min="0" value="{{ valores.clientes_afetados }}">
+  </label>
+
+  <label>Equipamento (opcional)
+    <select name="equipamento_id">
+      <option value="">-- nenhum --</option>
+      {% for equipamento in equipamentos %}
+      <option value="{{ equipamento.id }}" {% if equipamento.id == valores.equipamento_id %}selected{% endif %}>{{ equipamento.nome }}</option>
+      {% endfor %}
+    </select>
+  </label>
+
+  {% if incidente %}
+  <label>Responsável (opcional)
+    <select name="responsavel_id">
+      <option value="">-- nenhum --</option>
+      {% for usuario in usuarios %}
+      <option value="{{ usuario.id }}" {% if usuario.id == valores.responsavel_id %}selected{% endif %}>{{ usuario.nome }}</option>
+      {% endfor %}
+    </select>
+  </label>
+  {% else %}
+  <label>Aberto por
+    <select name="aberto_por_id">
+      <option value="">-- escolha --</option>
+      {% for usuario in usuarios %}
+      <option value="{{ usuario.id }}" {% if usuario.id == valores.aberto_por_id %}selected{% endif %}>{{ usuario.nome }}</option>
+      {% endfor %}
+    </select>
+  </label>
+  {% endif %}
+
+  {# Os bairros só aparecem no cadastro: services.incidentes.atualizar não mexe neles #}
+  {% if not incidente %}
+  <label>Bairros afetados</label>
+  <div class="checkboxes">
+    {% for bairro in bairros %}
+    <label>
+      <input type="checkbox" name="bairros_ids" value="{{ bairro.id }}"
+             {% if bairro.id in valores.bairros_ids %}checked{% endif %}>
+      {{ bairro.nome }}
+    </label>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  <button type="submit">Salvar</button>
+</form>
+
+<p><a href="{{ url_for('incidentes.listar') }}">Voltar</a></p>
+{% endblock %}

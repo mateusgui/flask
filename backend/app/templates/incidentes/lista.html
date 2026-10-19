@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block conteudo %}
+<h1>Incidentes</h1>
+<p><a href="{{ url_for('incidentes.novo_form') }}">Novo incidente</a></p>
+
+<table>
+  <tr>
+    <th>Título</th>
+    <th>Severidade</th>
+    <th>Status</th>
+    <th>Clientes afetados</th>
+    <th>Aberto em</th>
+  </tr>
+  {% for incidente in incidentes %}
+  <tr>
+    <td><a href="{{ url_for('incidentes.detalhar', incidente_id=incidente.id) }}">{{ incidente.titulo }}</a></td>
+    <td>{{ incidente.severidade }}</td>
+    <td>{{ incidente.status }}</td>
+    <td>{{ incidente.clientes_afetados }}</td>
+    <td>{% if incidente.aberto_em %}{{ incidente.aberto_em.strftime("%d/%m/%Y %H:%M") }}{% endif %}</td>
+  </tr>
+  {% endfor %}
+</table>
+{% endblock %}

@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block conteudo %}
+<h1>Bairros</h1>
+<p><a href="{{ url_for('bairros.novo_form') }}">Novo bairro</a></p>
+
+<table>
+  <tr>
+    <th>Nome</th>
+    <th>Região</th>
+    <th>Ações</th>
+  </tr>
+  {% for bairro in bairros %}
+  <tr>
+    <td>{{ bairro.nome }}</td>
+    <td>{{ bairro.regiao }}</td>
+    <td><a href="{{ url_for('bairros.editar_form', bairro_id=bairro.id) }}">editar</a></td>
+  </tr>
+  {% endfor %}
+</table>
+{% endblock %}

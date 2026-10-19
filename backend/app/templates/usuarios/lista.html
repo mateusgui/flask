@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block conteudo %}
+<h1>Usuários</h1>
+<p><a href="{{ url_for('usuarios.novo_form') }}">Novo usuário</a></p>
+
+<table>
+  <tr>
+    <th>Nome</th>
+    <th>E-mail</th>
+    <th>Perfil</th>
+    <th>Ativo</th>
+    <th>Ações</th>
+  </tr>
+  {% for usuario in usuarios %}
+  <tr>
+    <td>{{ usuario.nome }}</td>
+    <td>{{ usuario.email }}</td>
+    <td>{{ usuario.perfil }}</td>
+    <td>{% if usuario.ativo %}sim{% else %}não{% endif %}</td>
+    <td>
+      <a href="{{ url_for('usuarios.editar_form', usuario_id=usuario.id) }}">editar</a>
+      {% if usuario.ativo %}
+      <form method="post" action="{{ url_for('usuarios.desativar', usuario_id=usuario.id) }}">
+        <button type="submit">desativar</button>
+      </form>
+      {% endif %}
+    </td>
+  </tr>
+  {% endfor %}
+</table>
+{% endblock %}
