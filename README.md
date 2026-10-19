@@ -14,12 +14,6 @@ docker compose up -d --build
 
 A API fica disponível em `http://localhost:8000` e recarrega automaticamente ao salvar arquivos em `backend/`.
 
-Verifique se está tudo funcionando:
-
-```
-curl http://localhost:8000/health
-```
-
 ## Como parar
 
 ```
