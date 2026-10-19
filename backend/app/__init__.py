@@ -1,5 +1,4 @@
-from flask import Flask, jsonify
-from sqlalchemy import text
+from flask import Flask
 
 from app.config import Config
 from app.extensions import db, migrate
@@ -13,14 +12,9 @@ def create_app():
     migrate.init_app(app, db)
     from app import models
 
-    @app.get("/health")
-    def health():
-        try:
-            db.session.execute(text("SELECT 1"))
-            database_status = "ok"
-        except Exception:
-            database_status = "erro"
-
-        return jsonify({"status": "ok", "database": database_status})
+    from app.routes.usuarios import bp as usuarios_bp
+    from app.routes.bairros import bp as bairros_bp
+    app.register_blueprint(usuarios_bp)
+    app.register_blueprint(bairros_bp)
 
     return app
