@@ -24,8 +24,10 @@
     <td>{{ equipamento.ip }}</td>
     <td>{% if equipamento.bairro %}{{ equipamento.bairro.nome }}{% else %}-{% endif %}</td>
     <td>{% if equipamento.ativo %}sim{% else %}não{% endif %}</td>
-    <td>
-      <a href="{{ url_for('equipamentos.editar_form', equipamento_id=equipamento.id) }}">editar</a>
+    <td class="acoes-tabela">
+      <a href="{{ url_for('equipamentos.editar_form', equipamento_id=equipamento.id) }}">
+        <button>editar</button>
+      </a>
       {% if equipamento.ativo %}
       <form method="post" action="{{ url_for('equipamentos.desativar', equipamento_id=equipamento.id) }}">
         <button type="submit">desativar</button>

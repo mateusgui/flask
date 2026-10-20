@@ -22,8 +22,10 @@
     <td>{{ usuario.email }}</td>
     <td>{{ usuario.perfil }}</td>
     <td>{% if usuario.ativo %}sim{% else %}não{% endif %}</td>
-    <td>
-      <a href="{{ url_for('usuarios.editar_form', usuario_id=usuario.id) }}">editar</a>
+    <td class="acoes-tabela">
+      <a href="{{ url_for('usuarios.editar_form', usuario_id=usuario.id) }}">
+        <button>editar</button>
+      </a>
       {% if usuario.ativo %}
       <form method="post" action="{{ url_for('usuarios.desativar', usuario_id=usuario.id) }}">
         <button type="submit">desativar</button>

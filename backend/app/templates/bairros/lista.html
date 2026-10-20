@@ -18,7 +18,9 @@
   <tr>
     <td>{{ bairro.nome }}</td>
     <td>{{ bairro.regiao }}</td>
-    <td><a href="{{ url_for('bairros.editar_form', bairro_id=bairro.id) }}">editar</a></td>
+    <td><a href="{{ url_for('bairros.editar_form', bairro_id=bairro.id) }}">
+      <button>editar</button>
+    </a></td>
   </tr>
   {% endfor %}
 </table>

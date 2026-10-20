@@ -49,6 +49,13 @@ th {
   background: #eef1f5; 
 }
 
+.acoes-tabela {
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+  gap: 5px;
+}
+
 label { 
   display: block; 
   margin-top: 12px; 
