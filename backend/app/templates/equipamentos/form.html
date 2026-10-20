@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block conteudo %}
+<h1>{{ titulo }}</h1>
+
+{% if erro %}<p class="erro">{{ erro }}</p>{% endif %}
+
+<form method="post" action="{{ acao }}">
+  <label>Nome
+    <input type="text" name="nome" value="{{ valores.nome }}">
+  </label>
+
+  <label>Tipo
+    <select name="tipo">
+      {% for tipo in tipos %}
+      <option value="{{ tipo }}" {% if tipo == valores.tipo %}selected{% endif %}>{{ tipo }}</option>
+      {% endfor %}
+    </select>
+  </label>
+
+  <label>IP
+    <input type="text" name="ip" value="{{ valores.ip }}">
+  </label>
+
+  <label>Bairro (opcional)
+    <select name="bairro_id">
+      <option value="">-- nenhum --</option>
+      {% for bairro in bairros %}
+      <option value="{{ bairro.id }}" {% if bairro.id == valores.bairro_id %}selected{% endif %}>{{ bairro.nome }}</option>
+      {% endfor %}
+    </select>
+  </label>
+
+  <button type="submit">Salvar</button>
+</form>
+
+<p><a href="{{ url_for('equipamentos.listar') }}">Voltar</a></p>
+{% endblock %}
