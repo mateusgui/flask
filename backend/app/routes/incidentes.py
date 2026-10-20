@@ -3,6 +3,7 @@ from flask import Blueprint, abort, redirect, render_template, request, url_for
 from app.models import CATEGORIAS, SEVERIDADES
 from app.services import bairros as bairros_service
 from app.services import equipamentos as equipamentos_service
+from app.services import incidente_atualizacoes as atualizacoes_service
 from app.services import incidentes as service
 from app.services import usuarios as usuarios_service
 
@@ -33,7 +34,11 @@ def detalhar(incidente_id):
     if incidente is None:
         abort(404)
 
-    return render_template("incidentes/detalhe.html", incidente=incidente)
+    # Só usuários ativos podem ser autores de uma nova atualização
+    usuarios = [u for u in usuarios_service.listar() if u.ativo]
+    return render_template(
+        "incidentes/detalhe.html", incidente=incidente, usuarios=usuarios
+    )
 
 
 @bp.get("/novo")
@@ -177,6 +182,37 @@ def resolver(incidente_id):
         {
             "causa_raiz": request.form.get("causa_raiz", "").strip(),
             "solucao": request.form.get("solucao", "").strip(),
+        },
+    )
+    return redirect(url_for("incidentes.detalhar", incidente_id=incidente.id))
+
+
+@bp.post("/<int:incidente_id>/atualizacoes")
+def criar_atualizacao(incidente_id):
+    # Adiciona uma nota na linha do tempo e, se vier status novo, muda o status
+    incidente = service.buscar(incidente_id)
+    if incidente is None:
+        abort(404)
+
+    # Incidente fechado não recebe mais atualização
+    if incidente.status in ("resolvido", "cancelado"):
+        return redirect(url_for("incidentes.detalhar", incidente_id=incidente.id))
+
+    usuario_id = request.form.get("usuario_id", "")
+    mensagem = request.form.get("mensagem", "").strip()
+    status_novo = request.form.get("status_novo", "")
+
+    # Faltou o essencial: volta para o detalhe sem criar nada
+    if not usuario_id or not mensagem:
+        return redirect(url_for("incidentes.detalhar", incidente_id=incidente.id))
+
+    atualizacoes_service.criar(
+        incidente,
+        {
+            "usuario_id": int(usuario_id),
+            "mensagem": mensagem,
+            # Select vazio significa "manter o status atual"
+            "status_novo": status_novo or None,
         },
     )
     return redirect(url_for("incidentes.detalhar", incidente_id=incidente.id))
