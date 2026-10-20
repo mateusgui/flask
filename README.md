@@ -1,49 +1,80 @@
 # Registro de Incidentes (NOC)
 
-Ambiente de desenvolvimento Dockerizado para a API Flask + PostgreSQL. A aplicação (models, rotas, etc.) ainda será escrita; este repositório só contém o esqueleto do projeto e a infraestrutura de desenvolvimento.
+Aplicação web para o NOC de um provedor de internet registrar incidentes de rede
+(rompimento de fibra, queda de energia, falha de equipamento) e acompanhar a
+resolução deles. Cada incidente guarda os bairros afetados, o equipamento
+envolvido, a linha do tempo das atualizações e o tempo até a solução, o que
+permite medir o MTTR (tempo médio de reparo) da operação.
 
-## Pré-requisitos
+## Stack
 
-- Docker Desktop (Windows)
+- Python 3.12 + Flask 3 (páginas renderizadas no servidor com Jinja)
+- SQLAlchemy 2 + Flask-Migrate (Alembic)
+- PostgreSQL 16
+- Docker Compose (api + db + adminer)
 
-## Como subir
-
-```
-docker compose up -d --build
-```
-
-A API fica disponível em `http://localhost:8000` e recarrega automaticamente ao salvar arquivos em `backend/`.
-
-## Como parar
-
-```
-docker compose down
-```
-
-## Como ver os logs
+## Como rodar
 
 ```
-docker compose logs -f api
-```
-
-(troque `api` por `db` ou `adminer` para ver os logs dos outros serviços)
-
-## Como abrir o Adminer
-
-Acesse `http://localhost:8080` e use as credenciais definidas no `.env` (`POSTGRES_USER`, `POSTGRES_PASSWORD`, `POSTGRES_DB`), com servidor `db`.
-
-## Como rodar comandos do Flask dentro do container
-
-```
-docker compose exec api flask db init
-docker compose exec api flask db migrate -m "mensagem"
+docker compose up -d
 docker compose exec api flask db upgrade
 ```
 
-## Como zerar o banco
+Depois carregue os dados de exemplo (usuários, bairros, equipamentos e
+incidentes) rodando o `seed.sql`:
 
 ```
-docker compose down -v
+docker compose exec -T db psql -U noc_user -d noc_incidentes < seed.sql
 ```
 
-Isso remove o volume de dados do PostgreSQL, apagando todo o conteúdo do banco.
+A aplicação fica em `http://localhost:8000` (a home redireciona para a lista de
+incidentes). O Adminer, para olhar o banco, fica em `http://localhost:8080`
+(servidor `db`, credenciais do `.env`).
+
+## Usuários do seed
+
+Senha de todos: `senha123`
+
+| E-mail | Perfil |
+|---|---|
+| carla.mendes@noc.local | supervisor |
+| mateus.vilela@noc.local | operador |
+| rafael.souza@noc.local | operador |
+
+> A tela de login ainda não existe: os usuários são usados como autor do
+> incidente e das atualizações.
+
+## Estrutura de pastas
+
+```
+backend/
+├── wsgi.py                 # entrypoint: cria o app
+└── app/
+    ├── __init__.py         # create_app: configura, registra blueprints e a rota "/"
+    ├── config.py           # lê as variáveis de ambiente
+    ├── extensions.py       # db e migrate
+    ├── models/             # as tabelas
+    ├── services/           # as regras e o acesso ao banco
+    ├── routes/             # os blueprints (URLs)
+    ├── templates/          # o HTML (Jinja)
+    └── static/style.css    # o CSS
+```
+
+Cada camada tem um papel só:
+
+- **models** — descrevem as tabelas e os relacionamentos. Nenhuma consulta vive aqui,
+  só os campos, as constraints e propriedades derivadas (como o `mttr` do incidente).
+- **services** — são as únicas que falam com o banco: montam o `select`, dão
+  `db.session.add` e `commit`. Não conhecem HTTP (nada de `request` ou `redirect`).
+- **routes** — ligam a URL à service: leem o `request.form`, convertem texto para
+  `int`/`None`, validam, chamam a service e devolvem `render_template` ou `redirect`.
+- **templates** — só exibem o que a rota passou, usando os objetos direto
+  (`incidente.equipamento.nome`). Sem lógica de negócio.
+
+## Comandos úteis
+
+```
+docker compose logs -f api        # ver os logs
+docker compose down              # parar
+docker compose down -v           # parar e apagar o banco
+```
