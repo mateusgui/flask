@@ -2,7 +2,11 @@
 
 {% block conteudo %}
 <h1>Equipamentos</h1>
-<p><a href="{{ url_for('equipamentos.novo_form') }}">Novo equipamento</a></p>
+<p>
+  <a href="{{ url_for('equipamentos.novo_form') }}">
+    <button class="botao-novo-generico">Novo equipamento</button>
+  </a>
+</p>
 
 <table>
   <tr>
