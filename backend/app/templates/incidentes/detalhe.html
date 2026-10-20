@@ -72,6 +72,32 @@
 </table>
 
 {% if incidente.status != "resolvido" and incidente.status != "cancelado" %}
+<h2>Nova atualização</h2>
+<form method="post" action="{{ url_for('incidentes.criar_atualizacao', incidente_id=incidente.id) }}">
+  <label>Usuário
+    <select name="usuario_id">
+      <option value="">-- escolha --</option>
+      {% for usuario in usuarios %}
+      <option value="{{ usuario.id }}">{{ usuario.nome }}</option>
+      {% endfor %}
+    </select>
+  </label>
+
+  <label>Mensagem
+    <textarea name="mensagem" rows="3"></textarea>
+  </label>
+
+  <label>Status novo
+    <select name="status_novo">
+      <option value="">(manter)</option>
+      <option value="em_andamento">em_andamento</option>
+      <option value="cancelado">cancelado</option>
+    </select>
+  </label>
+
+  <button type="submit">Adicionar atualização</button>
+</form>
+
 <h2>Resolver</h2>
 <form method="post" action="{{ url_for('incidentes.resolver', incidente_id=incidente.id) }}">
   <label>Causa raiz
