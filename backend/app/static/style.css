@@ -76,6 +76,11 @@ td button {
   margin-top: 0; 
 }
 
+.desativar {
+  background: #921a1a;
+  color: #fff;
+}
+
 .botao-novo-generico {
   background: #2b4263;
   color: #fff;

@@ -30,7 +30,7 @@
       </a>
       {% if equipamento.ativo %}
       <form method="post" action="{{ url_for('equipamentos.desativar', equipamento_id=equipamento.id) }}">
-        <button type="submit">desativar</button>
+        <button class="desativar" type="submit">desativar</button>
       </form>
       {% endif %}
     </td>
