@@ -27,6 +27,9 @@ incidentes) rodando o `seed.sql`:
 docker compose exec -T db psql -U noc_user -d noc_incidentes < seed.sql
 ```
 
+O `seed.sql` limpa as tabelas antes de inserir, então pode ser rodado de novo
+sempre que você quiser voltar ao estado inicial.
+
 A aplicação fica em `http://localhost:8000` (a home redireciona para a lista de
 incidentes). O Adminer, para olhar o banco, fica em `http://localhost:8080`
 (servidor `db`, credenciais do `.env`).
