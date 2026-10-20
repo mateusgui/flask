@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block conteudo %}
+<h1>Relatório de MTTR</h1>
+
+{% if relatorio.total == 0 %}
+<p>Nenhum incidente resolvido ainda</p>
+{% else %}
+
+<h2>MTTR médio geral: {{ relatorio.media_geral | replace(".", ",") }} minutos</h2>
+<p>{{ relatorio.total }} incidente(s) resolvido(s).</p>
+
+<h2>Por severidade</h2>
+<table>
+  <tr>
+    <th>Severidade</th>
+    <th>Quantidade</th>
+    <th>MTTR médio (minutos)</th>
+  </tr>
+  {% for severidade, media in relatorio.media_por_severidade.items() %}
+  <tr>
+    <td>{{ severidade }}</td>
+    <td>{{ relatorio.quantidade_por_severidade[severidade] }}</td>
+    <td>{{ media | replace(".", ",") }}</td>
+  </tr>
+  {% endfor %}
+</table>
+
+<h2>Incidentes resolvidos</h2>
+<table>
+  <tr>
+    <th>Título</th>
+    <th>Severidade</th>
+    <th>Aberto em</th>
+    <th>Resolvido em</th>
+  </tr>
+  {% for incidente in relatorio.incidentes %}
+  <tr>
+    <td><a href="{{ url_for('incidentes.detalhar', incidente_id=incidente.id) }}">{{ incidente.titulo }}</a></td>
+    <td>{{ incidente.severidade }}</td>
+    <td>{% if incidente.aberto_em %}{{ incidente.aberto_em.strftime("%d/%m/%Y %H:%M") }}{% endif %}</td>
+    <td>{% if incidente.resolvido_em %}{{ incidente.resolvido_em.strftime("%d/%m/%Y %H:%M") }}{% endif %}</td>
+  </tr>
+  {% endfor %}
+</table>
+{% endif %}
+{% endblock %}
